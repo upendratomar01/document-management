@@ -24,7 +24,7 @@ export default function ProtectedRoute({
     if (user && pathname.startsWith("/auth")) {
       router.replace(ROUTES.HOME);
     }
-  }, [user, pathname]);
+  }, [user, pathname, router]);
 
   return children;
 }
