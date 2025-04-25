@@ -5,7 +5,6 @@ import * as Yup from "yup";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Checkbox from "@mui/material/Checkbox";
-import Divider from "@mui/material/Divider";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormLabel from "@mui/material/FormLabel";
 import FormControl from "@mui/material/FormControl";
@@ -15,7 +14,8 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { Card } from "@/components/Card";
-import { Facebook, Google } from "@mui/icons-material";
+import { useAuth } from "../context/AuthContext";
+import { ROUTES } from "@/constants/routes";
 
 // Styled container for the page layout
 const SignUpContainer = styled(Stack)(({ theme }) => ({
@@ -32,8 +32,9 @@ type AuthPageProps = {
 };
 
 export default function AuthPage({ isLogin }: AuthPageProps) {
+  const { signin, signup } = useAuth();
   // Validation schema using Yup
-  const validationSchema = Yup.object({
+  const authValidationSchema = Yup.object({
     name: !isLogin
       ? Yup.string().required("Name is required.")
       : Yup.string().notRequired(),
@@ -53,16 +54,24 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       password: "",
       allowExtraEmails: false,
     },
-    validationSchema,
+    validationSchema: authValidationSchema,
     onSubmit: (values) => {
       const submissionData = {
         email: values.email,
         password: values.password,
-        ...(isLogin
-          ? {}
-          : { name: values.name, allowExtraEmails: values.allowExtraEmails }),
+        name: values.name,
+        allowExtraEmails: values.allowExtraEmails,
       };
-      console.log("Form submitted:", submissionData);
+      if (isLogin) {
+        signin({
+          email: submissionData.email,
+          password: submissionData.password,
+        });
+      } else {
+        signup({
+          ...submissionData,
+        });
+      }
     },
   });
 
@@ -158,7 +167,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
           <Typography sx={{ textAlign: "center" }}>
             {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
             <Link
-              href={isLogin ? "/auth/signup" : "/auth/signin"}
+              href={isLogin ? ROUTES.SIGNUP : ROUTES.SIGNIN}
               variant="body2"
               sx={{ alignSelf: "center" }}
             >
