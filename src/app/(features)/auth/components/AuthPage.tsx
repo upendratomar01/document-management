@@ -66,8 +66,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       };
       try {
         setLoading(true);
-        // sleep for 2 second to simulate loading
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+
         if (isLogin) {
           await signin({
             email: submissionData.email,
@@ -80,6 +79,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
         }
       } catch (err) {
         alert("Login failed");
+        console.log("Login error", err);
       } finally {
         setLoading(false);
       }

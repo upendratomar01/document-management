@@ -7,6 +7,7 @@ import theme from "../theme";
 import { CssBaseline } from "@mui/material";
 import { AuthProvider } from "@features/auth/context/AuthContext";
 import ProtectedRoute from "@features/auth/components/ProtectedRoute";
+import Header from "@/components/Header";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -32,7 +33,10 @@ export default function RootLayout({
           <ThemeProvider theme={theme}>
             <CssBaseline enableColorScheme />
             <AuthProvider>
-              <ProtectedRoute>{children}</ProtectedRoute>
+              <ProtectedRoute>
+                <Header />
+                {children}
+              </ProtectedRoute>
             </AuthProvider>
           </ThemeProvider>
         </AppRouterCacheProvider>
