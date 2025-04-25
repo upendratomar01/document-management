@@ -1,5 +1,4 @@
 "use client";
-import * as React from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Box from "@mui/material/Box";
@@ -16,6 +15,8 @@ import { styled } from "@mui/material/styles";
 import { Card } from "@/components/Card";
 import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "@/constants/routes";
+import { useState } from "react";
+import { CircularProgress } from "@mui/material";
 
 // Styled container for the page layout
 const SignUpContainer = styled(Stack)(({ theme }) => ({
@@ -33,6 +34,7 @@ type AuthPageProps = {
 
 export default function AuthPage({ isLogin }: AuthPageProps) {
   const { signin, signup } = useAuth();
+  const [loading, setLoading] = useState(false);
   // Validation schema using Yup
   const authValidationSchema = Yup.object({
     name: !isLogin
@@ -55,22 +57,31 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       allowExtraEmails: false,
     },
     validationSchema: authValidationSchema,
-    onSubmit: (values) => {
+    onSubmit: async (values) => {
       const submissionData = {
         email: values.email,
         password: values.password,
         name: values.name,
         allowExtraEmails: values.allowExtraEmails,
       };
-      if (isLogin) {
-        signin({
-          email: submissionData.email,
-          password: submissionData.password,
-        });
-      } else {
-        signup({
-          ...submissionData,
-        });
+      try {
+        setLoading(true);
+        // sleep for 2 second to simulate loading
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        if (isLogin) {
+          await signin({
+            email: submissionData.email,
+            password: submissionData.password,
+          });
+        } else {
+          await signup({
+            ...submissionData,
+          });
+        }
+      } catch (err) {
+        alert("Login failed");
+      } finally {
+        setLoading(false);
       }
     },
   });
@@ -158,7 +169,15 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
               }
             />
           )}
-          <Button type="submit" fullWidth variant="contained">
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            disabled={loading}
+            startIcon={
+              loading ? <CircularProgress size={20} color="inherit" /> : null
+            }
+          >
             {isLogin ? "Sign in" : "Sign up"}
           </Button>
         </Box>
