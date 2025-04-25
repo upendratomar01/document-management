@@ -38,7 +38,7 @@ export default function Header() {
   if (hideHeaderRoutes.includes(pathname)) return null;
 
   return (
-    <AppBar position="static" elevation={1}>
+    <AppBar position="static" color="info" elevation={2}>
       <Toolbar sx={{ justifyContent: "space-between" }}>
         <Typography
           variant="h6"
