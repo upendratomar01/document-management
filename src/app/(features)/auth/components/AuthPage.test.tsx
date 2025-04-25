@@ -1,4 +1,5 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom";
 import AuthPage from "./AuthPage";
 import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "@/constants/routes";
