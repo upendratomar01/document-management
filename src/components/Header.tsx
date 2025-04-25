@@ -6,7 +6,6 @@ import {
   Toolbar,
   Typography,
   Box,
-  Button,
   Avatar,
   IconButton,
   Menu,
