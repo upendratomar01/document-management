@@ -56,7 +56,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
   });
 
   const handleLogin = async (data: SigninCreds) => {
-    const res = await loginUser(data);
+    const res = await loginUser({ email: data.email, password: data.password });
     if (res?.ok) {
       formik.resetForm();
       router.push(ROUTES.HOME);
