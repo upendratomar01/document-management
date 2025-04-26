@@ -1,30 +1,31 @@
 "use client";
 
 import { useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
+import { useSession } from "next-auth/react";
+import Loader from "@/components/Loader";
 
-export default function ProtectedRoute({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { user } = useAuth();
+export default function ProtectedRoute({ children }: React.PropsWithChildren) {
+  const { status } = useSession();
   const router = useRouter();
-  const pathname = usePathname();
+  const pathName = usePathname();
 
   useEffect(() => {
-    // Non-auth user trying to access protected route
-    if (!user && !pathname.startsWith("/auth")) {
-      router.replace(ROUTES.SIGNIN);
+    // Redirect to sign-in page if the user is unauthenticated
+    // Also check if the user is on the sign-in or sign-up page to avoid redirect loop
+    if (
+      status === "unauthenticated" &&
+      pathName !== ROUTES.SIGNIN &&
+      pathName !== ROUTES.SIGNUP
+    ) {
+      router.push(ROUTES.SIGNIN);
     }
+  }, [status, pathName, router]);
 
-    // Auth user trying to access login/signup
-    if (user && pathname.startsWith("/auth")) {
-      router.replace(ROUTES.HOME);
-    }
-  }, [user, pathname, router]);
+  if (status === "loading") {
+    return <Loader />;
+  }
 
   return children;
 }

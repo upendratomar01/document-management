@@ -13,8 +13,8 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/app/(features)/auth/context/AuthContext";
 import { ROUTES } from "@/constants/routes";
+import { signOut, useSession } from "next-auth/react";
 
 // List of paths where header should be hidden
 const hideHeaderRoutes = [ROUTES.SIGNIN, ROUTES.SIGNUP];
@@ -22,7 +22,7 @@ const hideHeaderRoutes = [ROUTES.SIGNIN, ROUTES.SIGNUP];
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { data: session } = useSession();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
@@ -32,7 +32,7 @@ export default function Header() {
 
   const handleLogoutClick = () => {
     handleMenuClose();
-    logout();
+    signOut({ redirect: true, callbackUrl: ROUTES.SIGNIN });
   };
 
   if (hideHeaderRoutes.includes(pathname)) return null;
@@ -48,10 +48,10 @@ export default function Header() {
           Document Management
         </Typography>
 
-        {user && (
+        {session && (
           <Box>
             <IconButton onClick={handleMenuOpen} size="small">
-              <Avatar>{user.email[0]?.toUpperCase()}</Avatar>
+              <Avatar>{session.user?.email?.[0]?.toUpperCase()}</Avatar>
             </IconButton>
             <Menu
               anchorEl={anchorEl}

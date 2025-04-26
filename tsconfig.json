@@ -20,6 +20,7 @@
     ],
     "paths": {
       "@features/*": ["./src/app/(features)/*"],
+      "@lib/*": ["./src/lib/*"],
       "@/*": ["./src/*"]
     }
   },
