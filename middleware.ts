@@ -1,11 +1,11 @@
-import { auth } from "@/app/api/auth/[...nextauth]/route";
 import { ROUTES } from "@/constants/routes";
-import { getToken } from "next-auth/jwt";
+import authOptions from "@lib/auth";
+import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const session = await auth();
+  const session = await getServerSession(authOptions);
   const isAuth = !!session;
   const isLoginPage = request.nextUrl.pathname.startsWith(ROUTES.SIGNIN);
 

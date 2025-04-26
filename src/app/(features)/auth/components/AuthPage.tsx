@@ -16,7 +16,7 @@ import { Card } from "@/components/Card";
 import { ROUTES } from "@/constants/routes";
 import { useState } from "react";
 import { Alert, CircularProgress } from "@mui/material";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { loginUser, registerUser } from "../services/authApi";
 import { SigninCreds, SignupCreds } from "../types";
 
