@@ -13,10 +13,12 @@ import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
 import { Card } from "@/components/Card";
-import { useAuth } from "../context/AuthContext";
 import { ROUTES } from "@/constants/routes";
 import { useState } from "react";
-import { CircularProgress } from "@mui/material";
+import { Alert, CircularProgress } from "@mui/material";
+import { useRouter, useSearchParams } from "next/navigation";
+import { loginUser, registerUser } from "../services/authApi";
+import { SigninCreds, SignupCreds } from "../types";
 
 // Styled container for the page layout
 const SignUpContainer = styled(Stack)(({ theme }) => ({
@@ -33,7 +35,12 @@ type AuthPageProps = {
 };
 
 export default function AuthPage({ isLogin }: AuthPageProps) {
-  const { signin, signup } = useAuth();
+  const router = useRouter();
+  const [alert, setAlert] = useState<{
+    severity: "error" | "success";
+    message: string;
+  } | null>(null);
+
   const [loading, setLoading] = useState(false);
   // Validation schema using Yup
   const authValidationSchema = Yup.object({
@@ -48,7 +55,38 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       .required("Password is required."),
   });
 
-  // Formik setup
+  const handleLogin = async (data: SigninCreds) => {
+    const res = await loginUser(data);
+    if (res?.ok) {
+      formik.resetForm();
+      router.push(ROUTES.HOME);
+    }
+    if (res?.error) {
+      setAlert({
+        severity: "error",
+        message: res.error,
+      });
+    }
+  };
+
+  const handleRegister = async (data: SignupCreds) => {
+    const res = await registerUser(data);
+    if (res?.error) {
+      setAlert({
+        severity: "error",
+        message: res.error,
+      });
+    }
+    if (res?.ok) {
+      setAlert({
+        severity: "success",
+        message: "Signup successful! Please login.",
+      });
+      formik.resetForm();
+    }
+  };
+
+  // Formik form setup
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -56,8 +94,10 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       password: "",
       allowExtraEmails: false,
     },
+
     validationSchema: authValidationSchema,
     onSubmit: async (values) => {
+      setAlert(null);
       const submissionData = {
         email: values.email,
         password: values.password,
@@ -66,19 +106,12 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
       };
       try {
         setLoading(true);
-
         if (isLogin) {
-          await signin({
-            email: submissionData.email,
-            password: submissionData.password,
-          });
+          handleLogin(submissionData as SigninCreds);
         } else {
-          await signup({
-            ...submissionData,
-          });
+          handleRegister(submissionData as SignupCreds);
         }
       } catch (err) {
-        alert("Login failed");
         console.log("Login error", err);
       } finally {
         setLoading(false);
@@ -96,6 +129,11 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
         >
           {isLogin ? "Sign in" : "Sign up"}
         </Typography>
+        {alert && (
+          <Alert severity={alert.severity} sx={{ mb: 2 }}>
+            {alert.message}
+          </Alert>
+        )}
         <Box
           component="form"
           noValidate
@@ -111,7 +149,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
                 required
                 fullWidth
                 id="name"
-                placeholder="Jon Snow"
+                placeholder="Your name"
                 value={formik.values.name}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
@@ -143,7 +181,7 @@ export default function AuthPage({ isLogin }: AuthPageProps) {
               required
               fullWidth
               name="password"
-              placeholder="••••••"
+              placeholder="******"
               type="password"
               id="password"
               autoComplete="new-password"

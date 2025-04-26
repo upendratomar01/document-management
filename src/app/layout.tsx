@@ -5,9 +5,9 @@ import { Roboto } from "next/font/google";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "../theme";
 import { CssBaseline } from "@mui/material";
-import { AuthProvider } from "@features/auth/context/AuthContext";
 import ProtectedRoute from "@features/auth/components/ProtectedRoute";
 import Header from "@/components/Header";
+import Providers from "@/components/Providers";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -32,12 +32,12 @@ export default function RootLayout({
         <AppRouterCacheProvider options={{ key: "css" }}>
           <ThemeProvider theme={theme}>
             <CssBaseline enableColorScheme />
-            <AuthProvider>
+            <Providers>
               <ProtectedRoute>
                 <Header />
                 {children}
               </ProtectedRoute>
-            </AuthProvider>
+            </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
       </body>
