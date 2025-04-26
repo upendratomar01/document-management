@@ -6,7 +6,6 @@ import { ThemeProvider } from "@mui/material/styles";
 import theme from "../theme";
 import { CssBaseline } from "@mui/material";
 import ProtectedRoute from "@features/auth/components/ProtectedRoute";
-import Header from "@/components/Header";
 import Providers from "@/components/Providers";
 
 const roboto = Roboto({
@@ -33,10 +32,7 @@ export default function RootLayout({
           <ThemeProvider theme={theme}>
             <CssBaseline enableColorScheme />
             <Providers>
-              <ProtectedRoute>
-                <Header />
-                {children}
-              </ProtectedRoute>
+              <ProtectedRoute>{children}</ProtectedRoute>
             </Providers>
           </ThemeProvider>
         </AppRouterCacheProvider>
