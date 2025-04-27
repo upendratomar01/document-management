@@ -7,7 +7,9 @@ import { useSession } from "next-auth/react";
 import Loader from "@/components/Loader";
 
 export default function ProtectedRoute({ children }: React.PropsWithChildren) {
-  const { status } = useSession();
+  const { data, status } = useSession();
+  console.log("ProtectedRoute", data, status);
+
   const router = useRouter();
   const pathName = usePathname();
 

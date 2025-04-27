@@ -1,5 +1,3 @@
-// export al;l routes from "./routes";
-
 export const ROUTES = {
   HOME: "/",
   SIGNIN: "/auth/signin",
@@ -8,3 +6,8 @@ export const ROUTES = {
   DASHBOARD_USERS: "/dashboard/users",
   DASHBOARD_DOCS: "/dashboard/docs",
 };
+
+export enum ROLES {
+  ADMIN = "ADMIN",
+  USER = "USER",
+}

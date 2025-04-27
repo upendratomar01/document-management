@@ -1,7 +1,31 @@
-import { type NextAuthOptions } from "next-auth";
+import { Session, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/prisma";
 import bcrypt from "bcryptjs";
+import { ROLES } from "@/constants/routes";
+// Extend the User type to include the role property
+declare module "next-auth" {
+  interface User {
+    role?: ROLES;
+  }
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      role?: ROLES;
+    };
+  }
+}
+// Extend the JWT type to include id and role
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string;
+    email: string;
+    name: string;
+    role?: ROLES;
+  }
+}
 
 const authOptions: NextAuthOptions = {
   providers: [
@@ -23,7 +47,7 @@ const authOptions: NextAuthOptions = {
 
         const isValid = await bcrypt.compare(
           credentials.password,
-          user.password
+          user.password,
         );
 
         if (!isValid) {
@@ -35,6 +59,32 @@ const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = user.id;
+        token.role = user.role; // Important: Add role to token
+        token.email = user.email;
+        token.name = user.name;
+      }
+      return token;
+    },
+    async session({
+      session,
+      token,
+    }: {
+      session: Session;
+      token: { id: string; role?: ROLES };
+    }) {
+      if (session.user) {
+        session.user.id = token.id;
+        session.user.role = token.role; // Important: Add role to session
+        session.user.email = token.email;
+        session.user.name = token.name;
+      }
+      return session;
+    },
+  },
   pages: {
     signIn: "/auth/signin", // Redirect unauthenticated users here
     error: "/auth/signin", // Error code passed in query string as ?error=
