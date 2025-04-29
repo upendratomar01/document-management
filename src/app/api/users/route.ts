@@ -16,15 +16,12 @@ export async function GET() {
     console.log("CATCH ERROR", error);
     return NextResponse.json(
       { error: "Error fetching users" },
-      { status: 500 },
+      { status: 500 }
     );
   }
 }
 
-export async function PATCH(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
+export async function PATCH(req: Request, { params }: any) {
   try {
     const { id } = params;
     const { role } = await req.json();
@@ -40,23 +37,5 @@ export async function PATCH(
   } catch (error) {
     console.log("CATCH ERROR", error);
     return NextResponse.json({ error: "Error updating user" }, { status: 500 });
-  }
-}
-
-export async function DELETE(
-  req: Request,
-  { params }: { params: { id: string } },
-) {
-  try {
-    const { id } = params;
-    const user = await prismm.user.findUnique({ where: { id } });
-    if (!user) {
-      return NextResponse.json({ error: "User not found" }, { status: 404 });
-    }
-    await prismm.user.delete({ where: { id } });
-    return NextResponse.json({ message: "User deleted successfully" });
-  } catch (error) {
-    console.log("CATCH ERROR", error);
-    return NextResponse.json({ error: "Error deleting user" }, { status: 500 });
   }
 }
