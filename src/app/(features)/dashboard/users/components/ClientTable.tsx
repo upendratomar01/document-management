@@ -5,7 +5,10 @@ import { Box, Button } from "@mui/material";
 import { useState } from "react";
 import { ModalForm } from "@/components/Modals/ModalForm";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-import { updateUserAction, deleteUserAction } from "@/lib/actions/userActions";
+import {
+  updateUserAction,
+  deleteUserAction,
+} from "@features/dashboard/users/actions/userActions";
 import { Severity, useSnackbar } from "@/context/SnackbarContext";
 import { ROLES } from "@/constants/routes";
 import { FormikTextField } from "@/components/FormikTextField";
@@ -110,8 +113,8 @@ export default function ClientTable({
         rows={users}
         columns={columns}
         getRowId={(row) => row.id}
-        autoPageSize
-        // pageSizeOptions={[5, 10, 20]}
+        // autoPageSize
+        pageSizeOptions={[10, 25, 50, 100]}
       />
       {/* Edit user role modal */}
       {openEdit && selectedUser && (

@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
-    "test": "jest",
+    "test": "jest --coverage",
     "test:watch": "jest --watch",
     "format": "prettier --write .",
     "start": "next start",
@@ -54,6 +54,7 @@
     "lint-staged": "^15.5.1",
     "prettier": "^3.5.3",
     "prisma": "^6.6.0",
+    "resize-observer-polyfill": "^1.5.1",
     "ts-jest": "^29.3.2",
     "ts-node": "^10.9.2",
     "typescript": "^5"
