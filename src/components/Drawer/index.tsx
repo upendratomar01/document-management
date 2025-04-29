@@ -85,27 +85,29 @@ export default function Drawer({ open = false, onClose }: DrawerProps) {
   };
 
   return (
-    <CustomDrawer variant="permanent" open={open}>
-      <DrawerHeader>
-        <IconButton onClick={handleDrawerClose}>
-          <ChevronLeftIcon />
-        </IconButton>
-      </DrawerHeader>
-      <Divider />
-      <List>
-        <DrawerItem
-          open={open}
-          text="Users"
-          icon={<People />}
-          onClick={() => router.push(ROUTES.DASHBOARD_USERS)}
-        />
-        <DrawerItem
-          open={open}
-          text="Documents"
-          icon={<Description />}
-          onClick={() => router.push(ROUTES.DASHBOARD_DOCS)}
-        />
-      </List>
-    </CustomDrawer>
+    open && (
+      <CustomDrawer variant="permanent" open={open}>
+        <DrawerHeader>
+          <IconButton onClick={handleDrawerClose}>
+            <ChevronLeftIcon />
+          </IconButton>
+        </DrawerHeader>
+        <Divider />
+        <List>
+          <DrawerItem
+            open={open}
+            text="Users"
+            icon={<People />}
+            onClick={() => router.push(ROUTES.DASHBOARD_USERS)}
+          />
+          <DrawerItem
+            open={open}
+            text="Documents"
+            icon={<Description />}
+            onClick={() => router.push(ROUTES.DASHBOARD_DOCS)}
+          />
+        </List>
+      </CustomDrawer>
+    )
   );
 }

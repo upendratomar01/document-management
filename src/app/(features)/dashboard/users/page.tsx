@@ -1,4 +1,4 @@
-import { getUsers } from "@/lib/actions/userActions";
+import { getUsers } from "@features/dashboard/users/actions/userActions";
 import ClientTable from "./components/ClientTable";
 import { UserType } from "./types";
 import { getServerSession } from "next-auth";

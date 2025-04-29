@@ -12,6 +12,8 @@ const customJestConfig = {
     "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
     // Handle alias paths (adjust if you use paths in tsconfig)
     "^@/(.*)$": "<rootDir>/src/$1",
+    "^@features/(.*)$": "<rootDir>/src/app/(features)/$1",
+    "^@lib/(.*)$": "<rootDir>/src/lib/$1",
   },
   testEnvironment: "jest-environment-jsdom",
 };

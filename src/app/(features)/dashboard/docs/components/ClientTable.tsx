@@ -102,8 +102,8 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
         rows={docs}
         columns={columns}
         getRowId={(row) => row.id}
-        autoPageSize
-        pageSizeOptions={[5, 10, 20]}
+        // autoPageSize
+        pageSizeOptions={[10, 25, 50, 100]}
       />
 
       <UploadModal
