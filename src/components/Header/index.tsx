@@ -1,22 +1,11 @@
 "use client";
-import {
-  Toolbar,
-  Typography,
-  Box,
-  Avatar,
-  IconButton,
-  Menu,
-  MenuItem,
-  styled,
-} from "@mui/material";
+import { Toolbar, Typography, Box, IconButton, styled } from "@mui/material";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
-import { signOut, useSession } from "next-auth/react";
-
 import MenuIcon from "@mui/icons-material/Menu";
-import { drawerWidth } from "./Drawer";
+import { drawerWidth } from "../Drawer";
+import AvatarDropDown from "./AvatarDropDown";
 
 type HeaderProps = {
   onOpen: () => void;
@@ -52,18 +41,6 @@ const AppBar = styled(MuiAppBar, {
 
 export default function Header({ onOpen, open }: HeaderProps) {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => setAnchorEl(null);
-
-  const handleLogoutClick = () => {
-    handleMenuClose();
-    signOut({ redirect: true, callbackUrl: ROUTES.SIGNIN });
-  };
 
   return (
     <AppBar position="fixed" open={open}>
@@ -92,20 +69,7 @@ export default function Header({ onOpen, open }: HeaderProps) {
           </Typography>
         </Box>
 
-        {session && (
-          <Box>
-            <IconButton onClick={handleMenuOpen} size="small">
-              <Avatar>{session.user?.email?.[0]?.toUpperCase()}</Avatar>
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              open={!!anchorEl}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
-            </Menu>
-          </Box>
-        )}
+        <AvatarDropDown />
       </Toolbar>
     </AppBar>
   );

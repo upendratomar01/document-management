@@ -10,11 +10,21 @@ datasource db {
 
 model User {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String?
+  name      String
   email     String   @unique
   password  String
-  allowExtraEmails Boolean @default(false)
+  allowExtraEmails Boolean? @default(false)
   role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Document {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  name     String
+  type     String
+  size     Int
+  path     String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

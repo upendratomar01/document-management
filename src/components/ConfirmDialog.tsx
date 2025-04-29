@@ -17,7 +17,7 @@ interface ConfirmDialogProps {
   onConfirm: () => void;
 }
 
-const ConfirmDialog = ({
+export const ConfirmDialog = ({
   open,
   title,
   description,
@@ -37,5 +37,3 @@ const ConfirmDialog = ({
     </DialogActions>
   </Dialog>
 );
-
-export default ConfirmDialog;
