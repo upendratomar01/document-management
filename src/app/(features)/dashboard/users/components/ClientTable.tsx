@@ -3,8 +3,8 @@
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { Box, Button } from "@mui/material";
 import { useState } from "react";
-import { ModalForm } from "@/components/ModalForm";
-import ConfirmDialog from "@/components/ConfirmDialog";
+import { ModalForm } from "@/components/Modals/ModalForm";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { updateUserAction, deleteUserAction } from "@/lib/actions/userActions";
 import { Severity, useSnackbar } from "@/context/SnackbarContext";
 import { ROLES } from "@/constants/routes";
@@ -54,8 +54,8 @@ export default function ClientTable({
       showSnackbar(Severity.SUCCESS, "User updated successfully!");
       setUsers((prevUsers) =>
         prevUsers.map((user) =>
-          user.id === selectedUser.id ? { ...user, ...values } : user,
-        ),
+          user.id === selectedUser.id ? { ...user, ...values } : user
+        )
       );
     } catch {
       showSnackbar(Severity.ERROR, "Failed to update user.");
@@ -70,7 +70,7 @@ export default function ClientTable({
       await deleteUserAction(selectedUser.id);
       showSnackbar(Severity.SUCCESS, "User deleted successfully!");
       setUsers((prevUsers) =>
-        prevUsers.filter((user) => user.id !== selectedUser?.id),
+        prevUsers.filter((user) => user.id !== selectedUser?.id)
       );
     } catch {
       showSnackbar(Severity.ERROR, "Failed to delete user.");

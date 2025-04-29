@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { ROUTES } from "@/constants/routes";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Loader from "@/components/Loader";
 
 export default function ProtectedRoute({ children }: React.PropsWithChildren) {
@@ -21,6 +21,7 @@ export default function ProtectedRoute({ children }: React.PropsWithChildren) {
       pathName !== ROUTES.SIGNIN &&
       pathName !== ROUTES.SIGNUP
     ) {
+      signOut({ redirect: false });
       router.push(ROUTES.SIGNIN);
     }
   }, [status, pathName, router]);

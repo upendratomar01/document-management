@@ -47,7 +47,7 @@ const authOptions: NextAuthOptions = {
 
         const isValid = await bcrypt.compare(
           credentials.password,
-          user.password,
+          user.password
         );
 
         if (!isValid) {
@@ -55,7 +55,10 @@ const authOptions: NextAuthOptions = {
         }
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { password, ...userWithoutPassword } = user; // Exclude password from the user object
-        return userWithoutPassword;
+        return {
+          ...userWithoutPassword,
+          role: userWithoutPassword.role as ROLES, // Ensure role matches the expected type
+        };
       },
     }),
   ],
@@ -64,8 +67,8 @@ const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id;
         token.role = user.role; // Important: Add role to token
-        token.email = user.email;
-        token.name = user.name;
+        token.email = user.email!;
+        token.name = user.name!;
       }
       return token;
     },
@@ -74,7 +77,7 @@ const authOptions: NextAuthOptions = {
       token,
     }: {
       session: Session;
-      token: { id: string; role?: ROLES };
+      token: { id: string; role?: ROLES; email: string; name: string };
     }) {
       if (session.user) {
         session.user.id = token.id;
