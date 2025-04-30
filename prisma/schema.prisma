@@ -25,6 +25,7 @@ model Document {
   type     String
   size     Int
   path     String
+  ingestionStatus IngestionStatus @default(PENDING)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -32,4 +33,11 @@ model Document {
 enum Role {
   USER
   ADMIN
+}
+
+enum IngestionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  IN_PROGRESS
 }

@@ -14,6 +14,7 @@ import People from "@mui/icons-material/People";
 import React from "react";
 import { ROUTES } from "@/constants/routes";
 import { DrawerItem } from "./DrawerItem";
+import { useRole } from "@features/auth/hooks/useRole";
 
 export const drawerWidth = 240;
 
@@ -79,35 +80,36 @@ type DrawerProps = {
 
 export default function Drawer({ open = false, onClose }: DrawerProps) {
   const router = useRouter();
+  const { isAdmin } = useRole();
 
   const handleDrawerClose = () => {
     onClose();
   };
 
   return (
-    open && (
-      <CustomDrawer variant="permanent" open={open}>
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            <ChevronLeftIcon />
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
+    <CustomDrawer variant="permanent" open={open}>
+      <DrawerHeader>
+        <IconButton onClick={handleDrawerClose}>
+          <ChevronLeftIcon />
+        </IconButton>
+      </DrawerHeader>
+      <Divider />
+      <List>
+        {isAdmin && (
           <DrawerItem
             open={open}
             text="Users"
             icon={<People />}
             onClick={() => router.push(ROUTES.DASHBOARD_USERS)}
           />
-          <DrawerItem
-            open={open}
-            text="Documents"
-            icon={<Description />}
-            onClick={() => router.push(ROUTES.DASHBOARD_DOCS)}
-          />
-        </List>
-      </CustomDrawer>
-    )
+        )}
+        <DrawerItem
+          open={open}
+          text="Documents"
+          icon={<Description />}
+          onClick={() => router.push(ROUTES.DASHBOARD_DOCS)}
+        />
+      </List>
+    </CustomDrawer>
   );
 }
