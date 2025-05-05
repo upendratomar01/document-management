@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
     console.error("Upload error:", error);
     // Return safe error message
     return NextResponse.json(
-      { error: error?.message || "Something went wrong" },
+      { error: "Something went wrong", data: error },
       { status: 500 }
     );
   }

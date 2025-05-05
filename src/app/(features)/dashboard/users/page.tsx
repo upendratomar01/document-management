@@ -8,7 +8,10 @@ import { redirect } from "next/navigation";
 
 export default async function UsersPage() {
   const session = await getServerSession(authOptions);
+
   if (!session) redirect(ROUTES.SIGNIN);
+
+  if (session.user.role === ROLES.USER) redirect(ROUTES.UNAUTHORIZED);
 
   const users: UserType[] = (await getUsers()).map((user) => ({
     ...user,

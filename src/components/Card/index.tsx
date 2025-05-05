@@ -1,4 +1,5 @@
-import { styled, Card as MuiCard } from "@mui/material";
+"use client";
+import { Card as MuiCard, styled } from "@mui/material";
 
 export const Card = styled(MuiCard)(({ theme }) => ({
   display: "flex",

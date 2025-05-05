@@ -1,19 +1,23 @@
 "use client";
 
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Chip } from "@mui/material";
 import { useEffect, useState } from "react";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
-
 import { Severity, useSnackbar } from "@/context/SnackbarContext";
 import { UploadModal } from "@/components/Modals/UploadModal";
 import { ClientTableProps, Doc } from "../types";
 import useUploadModal from "../hooks/useDocsUpload";
 import { deleteDocAction } from "../actions/docActions";
 import { signOut } from "next-auth/react";
+import ActionsRow from "./ActionsRow";
+import { INGESTION_STATUS } from "@/constants/routes";
+import { green, grey, red, yellow } from "@mui/material/colors";
+import { useIngestionStatus } from "../hooks/useIngestionStatus";
 
 export default function ClientTable({ initialDocs }: ClientTableProps) {
   const [docs, setDocs] = useState<Doc[]>(initialDocs);
+
   const { showSnackbar } = useSnackbar();
   const {
     files,
@@ -34,7 +38,11 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
 
   useEffect(() => {
     if (uploadedDocs.length > 0) {
-      setDocs((prevDocs) => [...prevDocs, ...uploadedDocs]);
+      setDocs((prev) => {
+        const existing = new Set(prev.map((doc) => doc.id));
+        const newDocs = uploadedDocs.filter((doc) => !existing.has(doc.id));
+        return [...prev, ...newDocs];
+      });
     }
   }, [uploadedDocs]);
 
@@ -42,6 +50,8 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
     setSelectedDocId(id);
     setOpenDelete(true);
   };
+
+  const onIngestionRetry = useIngestionStatus(setDocs);
 
   const onDeleteConfirm = async () => {
     if (!selectedDocId) return;
@@ -66,25 +76,52 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "ID", width: 180 },
-    { field: "name", headerName: "Name", width: 250 },
-    { field: "type", headerName: "Type", width: 150 },
+    { field: "id", headerName: "ID", minWidth: 180, flex: 0.3 },
+    { field: "name", headerName: "Name", minWidth: 250, flex: 1 },
+    { field: "type", headerName: "Type", minWidth: 150, flex: 0.5 },
     {
       field: "size",
       headerName: "Size",
-      width: 150,
+      minWidth: 150,
+      flex: 0.2,
       renderCell: (params: GridRenderCellParams) =>
         `${(params.value / 1024).toFixed(2)} KB`,
     },
-    { field: "path", headerName: "Path", width: 300 },
+    { field: "path", headerName: "Path", minWidth: 300, flex: 1 },
+    {
+      field: "ingestionStatus",
+      headerName: "Ingestion Status",
+      minWidth: 200,
+      flex: 0.5,
+      renderCell: (params) => {
+        const colorMap = {
+          [INGESTION_STATUS.PENDING]: grey[200],
+          [INGESTION_STATUS.IN_PROGRESS]: yellow[100],
+          [INGESTION_STATUS.COMPLETED]: green[100],
+          [INGESTION_STATUS.FAILED]: red[100],
+        } as const;
+        return (
+          <Chip
+            label={params.value}
+            sx={{
+              backgroundColor: colorMap[params.value as INGESTION_STATUS],
+            }}
+          />
+        );
+      },
+    },
     {
       field: "actions",
       headerName: "Actions",
-      width: 200,
+      minWidth: 200,
+      align: "right",
+      flex: 0.5,
       renderCell: (params: GridRenderCellParams) => (
-        <Button onClick={() => handleDelete(params.row.id)} color="error">
-          Delete
-        </Button>
+        <ActionsRow
+          doc={params.row}
+          onDelete={handleDelete}
+          onRetry={onIngestionRetry}
+        />
       ),
     },
   ];
@@ -102,8 +139,8 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
         rows={docs}
         columns={columns}
         getRowId={(row) => row.id}
-        // autoPageSize
         pageSizeOptions={[10, 25, 50, 100]}
+        disableRowSelectionOnClick
       />
 
       <UploadModal

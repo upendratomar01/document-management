@@ -1,9 +1,14 @@
+import { INGESTION_STATUS } from "@/constants/routes";
+
 export type Doc = {
   id: string;
-  name: string;
   type: string;
-  size: number;
+  name: string;
   path: string;
+  ingestionStatus: INGESTION_STATUS;
+  createdAt: Date;
+  updatedAt: Date;
+  size: number;
 };
 
 export type ClientTableProps = {

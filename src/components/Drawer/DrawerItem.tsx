@@ -7,15 +7,23 @@ import {
 
 type DrawerItemProps = {
   open: boolean;
+  selected: boolean;
   text: string;
   icon: React.ReactNode;
   onClick: () => void;
 };
 
-export function DrawerItem({ open, text, icon, onClick }: DrawerItemProps) {
+export function DrawerItem({
+  open,
+  text,
+  selected,
+  icon,
+  onClick,
+}: DrawerItemProps) {
   return (
     <ListItem disablePadding sx={{ display: "block" }}>
       <ListItemButton
+        selected={selected}
         sx={{
           minHeight: 48,
           px: 2.5,
