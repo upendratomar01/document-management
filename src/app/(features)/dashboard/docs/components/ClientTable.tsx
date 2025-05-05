@@ -114,7 +114,6 @@ export default function ClientTable({ initialDocs }: ClientTableProps) {
       field: "actions",
       headerName: "Actions",
       minWidth: 200,
-      align: "right",
       flex: 0.5,
       renderCell: (params: GridRenderCellParams) => (
         <ActionsRow

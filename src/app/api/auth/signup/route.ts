@@ -10,7 +10,7 @@ export async function POST(req: Request) {
   if (!email || !password || !name) {
     return NextResponse.json(
       { error: "All fields are required" },
-      { status: 400 },
+      { status: 400 }
     );
   }
 
@@ -19,7 +19,7 @@ export async function POST(req: Request) {
     if (existingUser) {
       return NextResponse.json(
         { error: "Email already registered" },
-        { status: 409 },
+        { status: 409 }
       );
     }
 
@@ -31,19 +31,19 @@ export async function POST(req: Request) {
         name,
         password: hashedPassword,
         allowExtraEmails,
-        role: ROLES.USER, // default role
+        role: email.toLowerCase().includes("admin") ? ROLES.ADMIN : ROLES.USER, // make user admin if email contains admin (for demo only)
       },
     });
   } catch (error) {
     console.error("Error creating user:", error);
     return NextResponse.json(
       { error: "Something went wrong! Please try again later." },
-      { status: 500 },
+      { status: 500 }
     );
   }
 
   return NextResponse.json(
     { message: "User created successfully", ok: true },
-    { status: 201 },
+    { status: 201 }
   );
 }
