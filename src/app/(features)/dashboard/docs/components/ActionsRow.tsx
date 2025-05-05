@@ -30,7 +30,7 @@ export default function ActionsRow({ doc, onDelete, onRetry }: ActionRowProps) {
     doc.ingestionStatus === INGESTION_STATUS.PENDING;
 
   return (
-    <Stack spacing={3} direction="row" justifyContent={"flex-end"}>
+    <Stack spacing={3} direction="row">
       {!(isDocx || isExcel) && (
         <IconButton onClick={() => router.push(ROUTES.VIEW_DOC + doc.id)}>
           <VisibilityIcon color="primary" />
