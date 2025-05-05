@@ -7,8 +7,9 @@ import {
   Theme,
 } from "@mui/material";
 import MuiDrawer from "@mui/material/Drawer";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Description from "@mui/icons-material/Description";
+import Quiz from "@mui/icons-material/Quiz";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import People from "@mui/icons-material/People";
 import React from "react";
@@ -81,6 +82,7 @@ type DrawerProps = {
 export default function Drawer({ open = false, onClose }: DrawerProps) {
   const router = useRouter();
   const { isAdmin } = useRole();
+  const pathName = usePathname();
 
   const handleDrawerClose = () => {
     onClose();
@@ -98,6 +100,7 @@ export default function Drawer({ open = false, onClose }: DrawerProps) {
         {isAdmin && (
           <DrawerItem
             open={open}
+            selected={pathName === ROUTES.DASHBOARD_USERS}
             text="Users"
             icon={<People />}
             onClick={() => router.push(ROUTES.DASHBOARD_USERS)}
@@ -105,9 +108,17 @@ export default function Drawer({ open = false, onClose }: DrawerProps) {
         )}
         <DrawerItem
           open={open}
+          selected={pathName === ROUTES.DASHBOARD_DOCS}
           text="Documents"
           icon={<Description />}
           onClick={() => router.push(ROUTES.DASHBOARD_DOCS)}
+        />
+        <DrawerItem
+          open={open}
+          selected={pathName === ROUTES.DASHBOARD_QNA}
+          text="Q & A"
+          icon={<Quiz />}
+          onClick={() => router.push(ROUTES.DASHBOARD_QNA)}
         />
       </List>
     </CustomDrawer>

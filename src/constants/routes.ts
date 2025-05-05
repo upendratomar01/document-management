@@ -7,6 +7,7 @@ export const ROUTES = {
   DASHBOARD_DOCS: "/dashboard/docs",
   UNAUTHORIZED: "/unauthorized",
   VIEW_DOC: "/dashboard/docs/view/",
+  DASHBOARD_QNA: "/dashboard/qna",
 };
 
 export enum ROLES {

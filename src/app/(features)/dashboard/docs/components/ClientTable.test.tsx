@@ -1,23 +1,34 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import ClientTable from "../components/ClientTable"; // Adjust path accordingly
 import { SnackbarProvider } from "@/context/SnackbarContext";
+import { Doc } from "../types";
+import { INGESTION_STATUS } from "@/constants/routes";
 
 // Mock the UploadModal and ConfirmDialog to simplify the test
 jest.mock("@/components/Modals/UploadModal", () => ({
   UploadModal: () => <div data-testid="upload-modal" />,
 }));
-jest.mock("@/components/ConfirmDialog", () => ({
-  ConfirmDialog: ({ open, onCancel, onConfirm }: any) =>
-    open ? (
-      <div data-testid="confirm-dialog">
-        <button onClick={onCancel}>Cancel</button>
-        <button onClick={onConfirm}>Confirm</button>
-      </div>
-    ) : null,
-}));
+// jest.mock("@/components/ConfirmDialog", () => ({
+//   ConfirmDialog: ({ onCancel, onConfirm }: any) => (
+//     <div data-testid="confirm-dialog">
+//       <button onClick={onCancel}>Cancel</button>
+//       <button onClick={onConfirm}>Confirm</button>
+//     </div>
+//   ),
+// }));
 
 jest.mock("next-auth/react", () => ({
   signOut: jest.fn(),
+  useSession: () => ({
+    data: { user: { role: "ADMIN" } },
+    status: "authenticated",
+  }),
+}));
+
+jest.mock("next/navigation", () => ({
+  useRouter: () => ({
+    pathname: "/",
+  }),
 }));
 
 jest.mock("../actions/docActions", () => ({
@@ -37,13 +48,16 @@ jest.mock("../hooks/useDocsUpload", () => () => ({
   getInputProps: jest.fn(() => ({})),
 }));
 
-const initialDocs = [
+const initialDocs: Doc[] = [
   {
     id: "1",
     name: "File 1",
     type: "pdf",
     size: 2048,
     path: "/files/file1.pdf",
+    ingestionStatus: INGESTION_STATUS.PENDING,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
   {
     id: "2",
@@ -51,6 +65,9 @@ const initialDocs = [
     type: "docx",
     size: 1024,
     path: "/files/file2.docx",
+    ingestionStatus: INGESTION_STATUS.PENDING,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   },
 ];
 
@@ -67,12 +84,14 @@ describe("ClientTable", () => {
   it("opens confirm dialog on delete click and deletes the doc", async () => {
     renderWithProviders(<ClientTable initialDocs={initialDocs} />);
 
+    // screen.debug(undefined, 999999);
     // Click the delete button
-    const deleteButtons = screen.getAllByText("Delete");
+    const deleteButtons = screen.getAllByTestId(/DeleteForeverIcon/);
     fireEvent.click(deleteButtons[0]);
 
+    // screen.debug(undefined, 9999999);
     // Confirm dialog appears
-    expect(await screen.findByTestId("confirm-dialog")).toBeInTheDocument();
+    expect(await screen.findByText("Confirm Delete")).toBeInTheDocument();
 
     // Click confirm
     fireEvent.click(screen.getByText("Confirm"));
